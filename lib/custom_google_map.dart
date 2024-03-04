@@ -55,13 +55,23 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
           right: 16,
           child: ElevatedButton(
             onPressed: () {
-              googleMapController.animateCamera(CameraUpdate.newLatLng(
-                  const LatLng(30.981564914269867, 31.277443854740934)));
+              googleMapController.animateCamera(
+                CameraUpdate.newLatLng(
+                  const LatLng(30.981564914269867, 31.277443854740934),
+                ),
+              );
+              initMapStyle();
             },
             child: const Text("Change location"),
           ),
         ),
       ],
     );
+  }
+
+  initMapStyle() async {
+    var nightMapStyle = await DefaultAssetBundle.of(context)
+        .loadString("assets/map_styles/night_map_style.json");
+    googleMapController.setMapStyle(nightMapStyle);
   }
 }
