@@ -23,6 +23,18 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
   @override
   Widget build(BuildContext context) {
     return GoogleMap(
+      cameraTargetBounds: CameraTargetBounds(
+        LatLngBounds(
+          northeast: const LatLng(
+            31.07069947545022,
+            31.416483936139535,
+          ),
+          southwest: const LatLng(
+            31.041509104013798,
+            31.350029688362447,
+          ),
+        ),
+      ),
       initialCameraPosition: initialCameraPosition,
     );
   }
