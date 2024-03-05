@@ -20,6 +20,7 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
   Set<Marker> markers = {};
   Set<Polyline> ployLines = {};
   Set<Polygon> polyGons = {};
+  Set<Circle> circles = {};
   @override
   void initState() {
     initialCameraPosition = const CameraPosition(
@@ -29,6 +30,7 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
     initMarkers();
     initPolyLines();
     initPolyGons();
+    initCircles();
     super.initState();
   }
 
@@ -45,6 +47,7 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
         GoogleMap(
           polylines: ployLines,
           polygons: polyGons,
+          circles: circles,
           markers: markers,
           onMapCreated: (controller) {
             googleMapController = controller;
@@ -176,5 +179,17 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
       ],
     );
     polyGons.add(polygon1);
+  }
+
+  initCircles() {
+    Circle mamaMiaMansouraCircle = Circle(
+      radius: 500,
+      strokeWidth: 1,
+      strokeColor: Colors.deepOrange,
+      fillColor: Colors.deepOrange.withOpacity(0.5),
+      circleId: const CircleId("1"),
+      center: const LatLng(31.030710013741, 31.388750130260416),
+    );
+    circles.add(mamaMiaMansouraCircle);
   }
 }
