@@ -221,6 +221,7 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
   }
 
   Future<void> getLocationData() async {
+    location.changeSettings(distanceFilter: 2);
     location.onLocationChanged.listen(
       (locationData) {
         var cameraPosition = CameraPosition(
@@ -230,7 +231,7 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
           ),
         );
         var myLocationMarker = Marker(
-          markerId: MarkerId("My_location_marker"),
+          markerId: const MarkerId("My_location_marker"),
           position: LatLng(
             locationData.latitude!,
             locationData.longitude!,
