@@ -85,7 +85,7 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
   }
 
 //Low level resizing of the image
-  Future<Uint16List> getImageFromRawData(String image, double width) async {
+  Future<Uint8List> getImageFromRawData(String image, double width) async {
     var imageData = await rootBundle.load(image);
     var imageCodec = await ui.instantiateImageCodec(
       imageData.buffer.asUint8List(),
@@ -96,12 +96,13 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
     var imageByteData =
         await imageFrame.image.toByteData(format: ui.ImageByteFormat.png);
 
-    return imageByteData!.buffer.asUint16List();
+    return imageByteData!.buffer.asUint8List();
   }
 
   initMarkers() async {
-    var customMarkerIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(), "assets/images/marker.png");
+    var customMarkerIcon = BitmapDescriptor.fromBytes(
+      await getImageFromRawData("assets/images/marker.png", 100),
+    );
     var myMarkers = places
         .map(
           (placeModel) => Marker(
