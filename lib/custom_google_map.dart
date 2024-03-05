@@ -158,11 +158,21 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
     Polygon polygon1 = Polygon(
       polygonId: const PolygonId("1"),
       strokeWidth: 1,
-      fillColor: Colors.amber.withOpacity(0.5),
+      fillColor: Colors.cyanAccent.withOpacity(0.5),
+      holes: const [
+        [
+          LatLng(31.046403216858618, 31.34981324503652),
+          LatLng(31.040163323899378, 31.351269840094023),
+          LatLng(31.03641919180087, 31.358795581224502),
+          LatLng(31.044947278420054, 31.36486472729747),
+        ]
+      ],
       points: const [
-        LatLng(31.044054949157722, 31.382447423126482),
-        LatLng(31.03745895578518, 31.389359123873398),
-        LatLng(31.025806522383423, 31.376603383505802),
+        LatLng(31.06782373598536, 31.39156897001851),
+        LatLng(31.059713621319204, 31.41293236419534),
+        LatLng(31.011870680081206, 31.384285994730945),
+        LatLng(31.030594693676214, 31.354911327737806),
+        LatLng(31.057218062306905, 31.348356649979007),
       ],
     );
     polyGons.add(polygon1);
