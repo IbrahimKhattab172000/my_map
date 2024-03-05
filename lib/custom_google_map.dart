@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:my_map/models/place.dart';
 import 'dart:ui' as ui;
@@ -21,12 +21,14 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
   Set<Polyline> ployLines = {};
   Set<Polygon> polyGons = {};
   Set<Circle> circles = {};
+  late Location location;
   @override
   void initState() {
     initialCameraPosition = const CameraPosition(
       target: LatLng(31.056458878848574, 31.366789128616503),
       zoom: 12,
     );
+    location = Location();
     initMarkers();
     initPolyLines();
     initPolyGons();
@@ -184,12 +186,22 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
   initCircles() {
     Circle mamaMiaMansouraCircle = Circle(
       radius: 500,
-      strokeWidth: 1,
+      strokeWidth: 2,
       strokeColor: Colors.deepOrange,
       fillColor: Colors.deepOrange.withOpacity(0.5),
       circleId: const CircleId("1"),
       center: const LatLng(31.030710013741, 31.388750130260416),
     );
     circles.add(mamaMiaMansouraCircle);
+  }
+
+  checkAndRequestLocationService() async {
+    var isServiceEnabled = await location.serviceEnabled();
+    if (!isServiceEnabled) {
+      isServiceEnabled = await location.requestService();
+      if (!isServiceEnabled) {
+        //TODO: Show error bar
+      }
+    }
   }
 }
