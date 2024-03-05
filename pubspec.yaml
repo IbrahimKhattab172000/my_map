@@ -62,6 +62,7 @@ flutter:
 
   assets:
     - assets\map_styles\night_map_style.json
+    - assets\images\marker.png
    
 
   # An image asset can refer to one or more resolution-specific "variants", see
