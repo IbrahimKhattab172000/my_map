@@ -161,8 +161,8 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
       fillColor: Colors.cyanAccent.withOpacity(0.5),
       holes: const [
         [
-          LatLng(31.046403216858618, 31.34981324503652),
-          LatLng(31.040163323899378, 31.351269840094023),
+          LatLng(31.045520932437462, 31.3525218669107),
+          LatLng(31.042584131946622, 31.351173242374717),
           LatLng(31.03641919180087, 31.358795581224502),
           LatLng(31.044947278420054, 31.36486472729747),
         ]
