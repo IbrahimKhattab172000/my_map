@@ -16,7 +16,7 @@ class CustomGoogleMaps extends StatefulWidget {
 
 class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
   late CameraPosition initialCameraPosition;
-  late GoogleMapController googleMapController;
+  GoogleMapController? googleMapController;
   Set<Marker> markers = {};
   Set<Polyline> ployLines = {};
   Set<Polygon> polyGons = {};
@@ -29,16 +29,17 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
       zoom: 12,
     );
     location = Location();
-    initMarkers();
-    initPolyLines();
-    initPolyGons();
-    initCircles();
+    // initMarkers();
+    // initPolyLines();
+    // initPolyGons();
+    // initCircles();
+    updateMyLocation();
     super.initState();
   }
 
   @override
   void dispose() {
-    googleMapController.dispose();
+    googleMapController!.dispose();
     super.dispose();
   }
 
@@ -74,7 +75,7 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
           right: 16,
           child: ElevatedButton(
             onPressed: () {
-              googleMapController.animateCamera(
+              googleMapController!.animateCamera(
                 CameraUpdate.newLatLng(
                   const LatLng(30.981564914269867, 31.277443854740934),
                 ),
@@ -91,7 +92,7 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
   initMapStyle() async {
     var nightMapStyle = await DefaultAssetBundle.of(context)
         .loadString("assets/map_styles/night_map_style.json");
-    googleMapController.setMapStyle(nightMapStyle);
+    googleMapController!.setMapStyle(nightMapStyle);
   }
 
 //Low level resizing of the image
@@ -205,23 +206,49 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
     }
   }
 
-  Future<void> checkAndRequestLocationPermission() async {
+  Future<bool> checkAndRequestLocationPermission() async {
     var permissionStatus = await location.hasPermission();
+    if (permissionStatus == PermissionStatus.deniedForever) {
+      return false;
+    }
     if (permissionStatus == PermissionStatus.denied) {
       permissionStatus = await location.requestPermission();
       if (permissionStatus != PermissionStatus.granted) {
-        //TODO: Show error bar
+        return false;
       }
     }
+    return true;
   }
 
   Future<void> getLocationData() async {
-    location.onLocationChanged.listen((locationData) {});
+    location.onLocationChanged.listen(
+      (locationData) {
+        var cameraPosition = CameraPosition(
+          target: LatLng(
+            locationData.latitude!,
+            locationData.longitude!,
+          ),
+        );
+        var myLocationMarker = Marker(
+          markerId: MarkerId("My_location_marker"),
+          position: LatLng(
+            locationData.latitude!,
+            locationData.longitude!,
+          ),
+        );
+        markers.add(myLocationMarker);
+        setState(() {});
+        googleMapController!
+            .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+      },
+    );
   }
 
   void updateMyLocation() async {
-    await checkAndRequestLocationPermission();
-    await checkAndRequestLocationPermission();
-    getLocationData();
+    await checkAndRequestLocationService();
+    var hasPremission = await checkAndRequestLocationPermission();
+    if (hasPremission) {
+      getLocationData();
+    } else {}
   }
 }
