@@ -19,6 +19,7 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
   late CameraPosition initialCameraPosition;
   GoogleMapController? googleMapController;
   late LocationService locationService;
+  bool isFirstCall = true;
   Set<Marker> markers = {};
   Set<Polyline> ployLines = {};
   Set<Polygon> polyGons = {};
@@ -205,20 +206,31 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
     if (hasPermission) {
       locationService.getRealTimeLocationData((locationData) {
         setMyLocationMarker(locationData);
-        setMyCameraPosition(locationData);
+        updateMyCameraPosition(locationData);
       });
     } else {}
   }
 
-  void setMyCameraPosition(LocationData locationData) {
-    var cameraPosition = CameraPosition(
-      target: LatLng(
+  void updateMyCameraPosition(LocationData locationData) {
+    if (isFirstCall) {
+      var cameraPosition = CameraPosition(
+        target: LatLng(
+          locationData.latitude!,
+          locationData.longitude!,
+        ),
+        zoom: 17,
+      );
+
+      googleMapController!
+          .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+      isFirstCall = false;
+    } else {
+      var latLong = LatLng(
         locationData.latitude!,
         locationData.longitude!,
-      ),
-    );
-    googleMapController!
-        .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+      );
+      googleMapController!.animateCamera(CameraUpdate.newLatLng(latLong));
+    }
   }
 
   void setMyLocationMarker(LocationData locationData) {
