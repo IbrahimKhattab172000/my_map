@@ -33,7 +33,6 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
     initPolyLines();
     initPolyGons();
     initCircles();
-    checkAndRequestLocationService();
     super.initState();
   }
 
@@ -204,10 +203,9 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
         //TODO: Show error bar
       }
     }
-    checkAndRequestLocationPermission();
   }
 
-  checkAndRequestLocationPermission() async {
+  Future<void> checkAndRequestLocationPermission() async {
     var permissionStatus = await location.hasPermission();
     if (permissionStatus == PermissionStatus.denied) {
       permissionStatus = await location.requestPermission();
@@ -215,5 +213,15 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
         //TODO: Show error bar
       }
     }
+  }
+
+  Future<void> getLocationData() async {
+    location.onLocationChanged.listen((locationData) {});
+  }
+
+  void updateMyLocation() async {
+    await checkAndRequestLocationPermission();
+    await checkAndRequestLocationPermission();
+    getLocationData();
   }
 }
