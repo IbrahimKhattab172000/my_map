@@ -23,7 +23,7 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
   void initState() {
     initialCameraPosition = const CameraPosition(
       target: LatLng(31.056458878848574, 31.366789128616503),
-      zoom: 12,
+      zoom: 0,
     );
     initMarkers();
     initPolyLines();
@@ -127,6 +127,7 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
       color: Colors.amber,
       width: 5,
       zIndex: 2,
+      patterns: [PatternItem.dot],
       points: [
         LatLng(31.04506121974146, 31.35460634427776),
         LatLng(31.052157224531594, 31.394646359163083),
@@ -139,9 +140,10 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
       color: Colors.blueAccent,
       width: 5,
       zIndex: 1,
+      geodesic: true,
       points: [
-        LatLng(31.038566777559648, 31.402091353073356),
-        LatLng(31.047508511681016, 31.35410157490198),
+        LatLng(-33.199629726158605, 20.038522154253734),
+        LatLng(83.31147980000767, 45.17524089046863),
       ],
     );
 
