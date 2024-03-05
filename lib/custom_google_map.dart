@@ -1,11 +1,12 @@
-import 'dart:typed_data';
+import 'dart:ui' as ui;
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
-import 'package:flutter/material.dart';
+
+import 'package:location_platform_interface/location_platform_interface.dart';
 import 'package:my_map/models/place.dart';
-import 'dart:ui' as ui;
+import 'package:my_map/utils/location_service.dart';
 
 class CustomGoogleMaps extends StatefulWidget {
   const CustomGoogleMaps({super.key});
@@ -17,18 +18,19 @@ class CustomGoogleMaps extends StatefulWidget {
 class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
   late CameraPosition initialCameraPosition;
   GoogleMapController? googleMapController;
+  late LocationService locationService;
   Set<Marker> markers = {};
   Set<Polyline> ployLines = {};
   Set<Polygon> polyGons = {};
   Set<Circle> circles = {};
-  late Location location;
   @override
   void initState() {
     initialCameraPosition = const CameraPosition(
       target: LatLng(31.056458878848574, 31.366789128616503),
       zoom: 12,
     );
-    location = Location();
+    locationService = LocationService();
+
     // initMarkers();
     // initPolyLines();
     // initPolyGons();
@@ -196,60 +198,38 @@ class _CustomGoogleMapsState extends State<CustomGoogleMaps> {
     circles.add(mamaMiaMansouraCircle);
   }
 
-  checkAndRequestLocationService() async {
-    var isServiceEnabled = await location.serviceEnabled();
-    if (!isServiceEnabled) {
-      isServiceEnabled = await location.requestService();
-      if (!isServiceEnabled) {
-        //TODO: Show error bar
-      }
-    }
-  }
-
-  Future<bool> checkAndRequestLocationPermission() async {
-    var permissionStatus = await location.hasPermission();
-    if (permissionStatus == PermissionStatus.deniedForever) {
-      return false;
-    }
-    if (permissionStatus == PermissionStatus.denied) {
-      permissionStatus = await location.requestPermission();
-      if (permissionStatus != PermissionStatus.granted) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  Future<void> getLocationData() async {
-    location.changeSettings(distanceFilter: 2);
-    location.onLocationChanged.listen(
-      (locationData) {
-        var cameraPosition = CameraPosition(
-          target: LatLng(
-            locationData.latitude!,
-            locationData.longitude!,
-          ),
-        );
-        var myLocationMarker = Marker(
-          markerId: const MarkerId("My_location_marker"),
-          position: LatLng(
-            locationData.latitude!,
-            locationData.longitude!,
-          ),
-        );
-        markers.add(myLocationMarker);
-        setState(() {});
-        googleMapController!
-            .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-      },
-    );
-  }
-
   void updateMyLocation() async {
-    await checkAndRequestLocationService();
-    var hasPremission = await checkAndRequestLocationPermission();
-    if (hasPremission) {
-      getLocationData();
+    await locationService.checkAndRequestLocationService();
+    var hasPermission =
+        await locationService.checkAndRequestLocationPermission();
+    if (hasPermission) {
+      locationService.getRealTimeLocationData((locationData) {
+        setMyLocationMarker(locationData);
+        setMyCameraPosition(locationData);
+      });
     } else {}
+  }
+
+  void setMyCameraPosition(LocationData locationData) {
+    var cameraPosition = CameraPosition(
+      target: LatLng(
+        locationData.latitude!,
+        locationData.longitude!,
+      ),
+    );
+    googleMapController!
+        .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+  }
+
+  void setMyLocationMarker(LocationData locationData) {
+    var myLocationMarker = Marker(
+      markerId: const MarkerId("My_location_marker"),
+      position: LatLng(
+        locationData.latitude!,
+        locationData.longitude!,
+      ),
+    );
+    markers.add(myLocationMarker);
+    setState(() {});
   }
 }
